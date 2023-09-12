@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,8 +26,13 @@ public class Order {
     @Column
     private String address;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Product> products = new ArrayList<Product>();
+    @Column
+    private List<Integer> productIdList;
+
+
+
+//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,orphanRemoval = true)
+//    private List<Product> products = new ArrayList<Product>();
 
 
 
