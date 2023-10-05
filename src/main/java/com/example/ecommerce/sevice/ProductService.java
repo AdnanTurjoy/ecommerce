@@ -2,9 +2,19 @@ package com.example.ecommerce.sevice;
 
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.repository.ProductRepository;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,5 +50,32 @@ public class ProductService {
             return "Did not Found this product!";
         }
     }
+
+
+    public void saveDataFromExcel(MultipartFile file) throws IOException {
+        InputStream inputStream = file.getInputStream();
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        System.out.println(sheet);
+        for (Row row : sheet) {
+           // System.out.println(row.getCell(4).getNumericCellValue());
+            Product product = new Product();
+            product.setProductName(row.getCell(0).getStringCellValue());
+            product.setProductType(Product.ProductType.valueOf(row.getCell(1).getStringCellValue()));
+            product.setDescription(row.getCell(2).getStringCellValue());
+            product.setPrice(row.getCell(3).getNumericCellValue());
+            product.setAvailableQuantity((int) row.getCell(4).getNumericCellValue());
+
+            // Set other fields as needed
+
+            productRepository.save(product);
+        }
+
+
+
+        workbook.close();
+        inputStream.close();
+    }
+
 
 }
